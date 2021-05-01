@@ -17,8 +17,7 @@ export default function EventItem({event}) {
     const event_id = `/events/${event.id}`
     return (
         <li className={eventStyles.item}>
-            <img     src={event.image} alt={event.title} />
-
+            <img src={event.image} alt={event.title} />
             <div className={eventStyles.content}>
                 <div>
                   <h2> {event.title} </h2> <div className={eventStyles.date}> <time> <DateIcon /> {new Date(event.date).toLocaleDateString("en-US" ,{day :"numeric" , month:"long",year:'numeric'})} </time></div>

@@ -1,22 +1,29 @@
 
 import Eventlist from '../../components/Eventlist'
-import {getAllEvents} from '../../dummy-data'
 
-
-
-
-
-const Events = () => {
+const Events = ({data}) => {
   
-  const AllEvents = getAllEvents()
-
   return (
     <div>
       {
-        <Eventlist items={AllEvents} />
+        <Eventlist items={data} />
       }
     </div>
   )
+}
+
+export async function getStaticProps() {
+  const res = await fetch('https://event-next-app-default-rtdb.firebaseio.com/events.json')
+  const data = await res.json()
+  console.log("Re render after 60 seconds atall evnts")
+  
+  
+  return {
+    props: {
+     data 
+    },
+    revalidate : 60 // will be passed to the page component as props
+  }
 }
 
 export default Events

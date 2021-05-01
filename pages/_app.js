@@ -1,9 +1,15 @@
+import  Head from 'next/head'
+
 import Layout from '../components/layouts/Layout'
 
 import '../styles/globals.css'
 
 function MyApp({ Component, pageProps }) {
-  return <Layout> <Component {...pageProps} /> </Layout>
+  return <Layout> 
+    <Head>
+      <meta name="viewport" content="initial-scale=1.0lawda" />
+    </Head>
+    <Component {...pageProps} /> </Layout>
 } 
 
 export default MyApp

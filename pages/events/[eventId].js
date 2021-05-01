@@ -1,7 +1,8 @@
-import { useRouter } from 'next/router'
 import {Fragment } from 'react'
+import React , {useEffect , useState} from 'react'
+import useSWR from 'swr'
 
-import {getEventById} from '../../dummy-data'
+
 import EventSummary from '../../components/UI/event-detail/event-summary'
 import EventLogistics from '../../components/UI/event-detail/event-logistics'
 import EventContent from '../../components/UI/event-detail/event-content'
@@ -12,18 +13,18 @@ import EventContent from '../../components/UI/event-detail/event-content'
 
 
 
-function Event () {
+function Event (props) {
+   
+   const [event, setevent] = useState(props.event)
 
-  const router = useRouter()
-  const eventid = router.query.eventId
-  
-  const event = getEventById(eventid)
+   const { data , error } = useSWR('https://event-next-app-default-rtdb.firebaseio.com/events.json')
 
- 
-  if(!event){
-    return <h1> NO EVENT </h1>
-  }
-
+  useEffect(() => {
+    if(data) {
+      const eventnew = data.find((event) => event.id === props.id);
+      setevent(eventnew)
+    }
+   }, [data])
 
     return (
       <Fragment>
@@ -33,5 +34,44 @@ function Event () {
       </Fragment>
       )
 }
+
+export async function getStaticProps(context) {
+  console.log("Re render after 10 seconds at event id  evnts")
+  const res = await fetch('https://event-next-app-default-rtdb.firebaseio.com/events.json')
+  const data = await res.json()
+
+  const {params} = context ;
+  const id = params.eventId ;
+
+  const event = data.find((event) => event.id === id);
+
+  if(!event) {
+    return {
+      notFound : true 
+    }
+  }
+
+  return {
+    props: {
+     event ,
+     id : id
+    }, // will be passed to the page component as props
+    revalidate : 10 
+  }
+}
+
+
+export async function getStaticPaths (){
+
+  return {
+    paths : [ 
+      { params : { eventId : 'e1' } 
+      }
+      
+    ],
+    fallback : "blocking"
+  }
+}
+
 
 export default Event
